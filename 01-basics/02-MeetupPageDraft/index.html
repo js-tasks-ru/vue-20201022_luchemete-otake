@@ -6,11 +6,16 @@
         content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <link rel="stylesheet" href="/assets/styles/index.css">
+  <style>
+    [v-cloak] {
+      display: none;
+    }
+  </style>
   <title>Meetup Page Draft</title>
 </head>
 <body>
-<div id="app">
-  <div>
+<div id="app" v-cloak>
+  <div v-if="meetup">
     <div class="meetup-cover"
          :style="meetup.cover ? `--bg-url: url('${meetup.cover}')` : ''">
       <h1 class="meetup-cover__title">{{ meetup.title }}</h1>
@@ -33,7 +38,7 @@
               </div>
               <div class="meetup-agenda__item-col">{{ agendaItem.startsAt }} - {{ agendaItem.endsAt }}</div>
               <div class="meetup-agenda__item-col">
-                <h5 class="meetup-agenda__title" v-html="agendaItem.title"></h5>
+                <h5 class="meetup-agenda__title" v-if="agendaItem.title">{{ agendaItem.title }}</h5>
                 <p v-if="agendaItem.isTalk"><span>{{ agendaItem.speaker }}</span><span class="meetup-agenda__dot"></span><span class="meetup-agenda__lang">{{ agendaItem.language }}</span></p>
                 <p v-if="agendaItem.description">{{ agendaItem.description }}</p>
               </div>

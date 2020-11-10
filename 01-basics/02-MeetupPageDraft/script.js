@@ -59,7 +59,7 @@ export const app = new Vue({
   el: '#app',
 
   data: {
-    rawMeetup: {},
+    rawMeetup: null,
   },
 
   mounted() {
@@ -68,6 +68,9 @@ export const app = new Vue({
 
   computed: {
     meetup() {
+      if (!this.rawMeetup) {
+        return null;
+      }
       return {
         ...this.rawMeetup,
         agenda: this.rawMeetup.agenda
@@ -84,7 +87,7 @@ export const app = new Vue({
             };
           })
           : undefined,
-        cover: this.rawMeetup.imageId ? this.meetupCoverLink : undefined,
+        cover: this.rawMeetup.imageId ? getMeetupCoverLink(this.rawMeetup) : undefined,
         localDate: new Date(this.rawMeetup.date).toLocaleString(
           navigator.language,
           {
@@ -95,9 +98,6 @@ export const app = new Vue({
         ),
         dateOnlyString: getDateOnlyString(new Date(this.rawMeetup.date)),
       };
-    },
-    meetupCoverLink() {
-      return getMeetupCoverLink(this.rawMeetup);
     },
   },
 
