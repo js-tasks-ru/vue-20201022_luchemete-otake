@@ -15,6 +15,17 @@ function getMeetupCoverLink(meetup) {
   return `${API_URL}/images/${meetup.imageId}`;
 }
 
+function getMeetupLink(meetupId) {
+  return `${API_URL}/meetups/${meetupId}`;
+}
+
+function getDateOnlyString(date) {
+  const YYYY = date.getFullYear();
+  const MM = (date.getMonth() + 1).toString().padStart(2, '0');
+  const DD = date.getDate().toString().padStart(2, '0');
+  return `${YYYY}-${MM}-${DD}`;
+}
+
 /**
  * Словарь заголовков по умолчанию для всех типов элементов программы
  */
@@ -48,19 +59,53 @@ export const app = new Vue({
   el: '#app',
 
   data: {
-    //
+    rawMeetup: null,
   },
 
   mounted() {
-    // Требуется получить данные митапа с API
+    this.getMeetupData(MEETUP_ID);
   },
 
   computed: {
-    //
+    meetup() {
+      if (!this.rawMeetup) {
+        return null;
+      }
+      return {
+        ...this.rawMeetup,
+        agenda: this.rawMeetup.agenda
+          ? this.rawMeetup.agenda.map((agendaItem) => {
+            return {
+              ...agendaItem,
+              isTalk: agendaItem.type === 'talk',
+              title: agendaItem.title
+                ? agendaItem.title
+                : agendaItemTitles[agendaItem.type],
+              icon: `/assets/icons/icon-${
+                agendaItemIcons[agendaItem.type]
+              }.svg`,
+            };
+          })
+          : undefined,
+        cover: this.rawMeetup.imageId ? getMeetupCoverLink(this.rawMeetup) : undefined,
+        localDate: new Date(this.rawMeetup.date).toLocaleString(
+          navigator.language,
+          {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+          },
+        ),
+        dateOnlyString: getDateOnlyString(new Date(this.rawMeetup.date)),
+      };
+    },
   },
 
   methods: {
-    // Получение данных с API предпочтительнее оформить отдельным методом,
-    // а не писать прямо в mounted()
+    async getMeetupData(id) {
+      this.rawMeetup = await fetch(getMeetupLink(id)).then((response) =>
+        response.json(),
+      );
+    },
   },
 });
