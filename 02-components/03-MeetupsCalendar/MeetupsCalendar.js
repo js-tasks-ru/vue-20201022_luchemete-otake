@@ -1,6 +1,37 @@
-/*
-  Полезные функции по работе с датой можно описать вне Vue компонента
- */
+function getFirstDayOfMonth(year, month) {
+  let firstDay = new Date(year, month, 1).getDay();
+
+  return (firstDay === 0 ? 7 : firstDay) - 1;
+}
+
+function isSameDate(date, meetupDate) {
+  return (
+    meetupDate.getFullYear() === date.getFullYear() &&
+    meetupDate.getMonth() === date.getMonth() &&
+    meetupDate.getDate() === date.getDate()
+  );
+}
+
+function isLeapYear(year) {
+  return (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0;
+}
+
+function daysInMonth(year, month) {
+  return [
+    31,
+    isLeapYear(year) ? 29 : 28,
+    31,
+    30,
+    31,
+    30,
+    31,
+    31,
+    30,
+    31,
+    30,
+    31,
+  ][month];
+}
 
 export const MeetupsCalendar = {
   name: 'MeetupsCalendar',
@@ -9,34 +40,82 @@ export const MeetupsCalendar = {
     <div class="rangepicker__calendar">
       <div class="rangepicker__month-indicator">
         <div class="rangepicker__selector-controls">
-          <button class="rangepicker__selector-control-left"></button>
-          <div>Июнь 2020</div>
-          <button class="rangepicker__selector-control-right"></button>
+          <button class="rangepicker__selector-control-left" @click="prevMonth"></button>
+          <div>{{ localDate }}</div>
+          <button class="rangepicker__selector-control-right" @click="nextMonth"></button>
         </div>
       </div>
       <div class="rangepicker__date-grid">
-        <div class="rangepicker__cell rangepicker__cell_inactive">28</div>
-        <div class="rangepicker__cell rangepicker__cell_inactive">29</div>
-        <div class="rangepicker__cell rangepicker__cell_inactive">30</div>
-        <div class="rangepicker__cell rangepicker__cell_inactive">31</div>
-        <div class="rangepicker__cell">
-          1
-          <a class="rangepicker__event">Митап</a>
-          <a class="rangepicker__event">Митап</a>
+        <div v-for="day in getCalendarDays" class="rangepicker__cell" :class="{rangepicker__cell_inactive : !day.isInMonth}">
+          {{ day.date }}
+          <a v-for="meetup in day.meetups" class="rangepicker__event">{{ meetup.title }}</a>
         </div>
-        <div class="rangepicker__cell">2</div>
-        <div class="rangepicker__cell">3</div>
       </div>
     </div>
   </div>`,
 
-  // Пропсы
+  props: {
+    meetups: {
+      type: Array,
+      required: true,
+    },
+  },
 
-  // В качестве локального состояния требуется хранить что-то,
-  // что позволит определить текущий показывающийся месяц.
-  // Изначально должен показываться текущий месяц
+  data() {
+    return {
+      year: new Date().getFullYear(),
+      month: new Date().getMonth(),
+    };
+  },
+  computed: {
+    localDate() {
+      return new Date(this.year, this.month, 1).toLocaleString(
+        navigator.language,
+        {
+          year: 'numeric',
+          month: 'long',
+        },
+      );
+    },
+    getCalendarDays() {
+      console.log('qwe');
+      let days = daysInMonth(this.year, this.month);
+      let firstDay = getFirstDayOfMonth(this.year, this.month);
 
-  // Вычислимые свойства помогут как с получением списка дней, так и с выводом информации
+      days += firstDay;
+      if (days % 7) {
+        days += 7 - (days % 7);
+      }
 
-  // Методы понадобятся для переключения между месяцами
+      let calendarDays = [];
+      let day = new Date(this.year, this.month, 1 - firstDay);
+      while (days > 0) {
+        calendarDays.push({
+          date: day.getDate(),
+          meetups: this.meetups.filter((meetup) => {
+            const meetupDate = new Date(meetup.date);
+            return isSameDate(day, meetupDate);
+          }),
+          isInMonth: day.getMonth() === this.month,
+        });
+        day.setDate(day.getDate() + 1);
+        days -= 1;
+      }
+      return calendarDays;
+    },
+  },
+
+  methods: {
+    nextMonth() {
+      this.changeMonth(this.month + 1);
+    },
+    prevMonth() {
+      this.changeMonth(this.month - 1);
+    },
+    changeMonth(month){
+      let newDate = new Date(this.year, month, 1);
+      this.year = newDate.getFullYear();
+      this.month = newDate.getMonth();
+    },
+  },
 };
