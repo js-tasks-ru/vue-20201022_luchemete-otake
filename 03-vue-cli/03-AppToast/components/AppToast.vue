@@ -1,12 +1,8 @@
 <template>
   <div class="toasts">
     <template v-for="toast in toasts">
-      <div v-if="toast.isSuccess" class="toast toast_success">
-        <app-icon icon="check-circle" />
-        <span>{{ toast.message }}</span>
-      </div>
-      <div v-else class="toast toast_error">
-        <app-icon icon="alert-circle" />
+      <div class="toast" :class="toast.isSuccess ? 'toast_success' : 'toast_error'" >
+        <app-icon :icon="toast.isSuccess ? 'check-circle' : 'alert-circle'" />
         <span>{{toast.message}}</span>
       </div>
     </template>
