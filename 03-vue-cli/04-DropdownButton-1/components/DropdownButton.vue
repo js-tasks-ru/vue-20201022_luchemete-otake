@@ -1,7 +1,3 @@
-<!--
-Добавить слоты для содержимого кнопок.
--->
-
 <template>
   <div class="dropdown" :class="{ show: show }">
     <button type="button" class="button dropdown__toggle" :class="{ 'dropdown__toggle_icon' : isIcon}" @click="show = !show">
