@@ -1,8 +1,8 @@
 <template>
   <div class="dropdown" :class="{ show: show }">
     <button type="button" class="button dropdown__toggle" :class="{ 'dropdown__toggle_icon' : isIcon}" @click="show = !show">
-      <app-icon v-if="isIcon && valueHasIcon(value)" :icon="getIconByValue(value)" />
-      {{ title }}{{ value ? ` - ${getTextByValue(value)}`: '' }}
+      <app-icon v-if="isIcon && selectedOption && selectedOption.icon" :icon="selectedOption.icon" />
+      {{ title }}{{ value ? ` - ${selectedOption.text}`: '' }}
     </button>
 
     <div v-show="show" class="dropdown__menu" :class="{ show: show }">
@@ -35,8 +35,8 @@ export default {
     options: {
       type: Array,
       required: true,
-      validate: (options) => {
-        options.every(option => {
+      validator: (options) => {
+        return options.every(option => {
           const keys = Object.keys(option);
           return keys.includes('value') && keys.includes('text');
         });
@@ -55,21 +55,15 @@ export default {
     isIcon() {
       return this.options.some(option => option.icon);
     },
+    selectedOption() {
+      if(!this.value) {
+        return null;
+      }
+      return this.options.find(option => option.value === this.value);
+    }
   },
 
   methods: {
-    valueHasIcon(value) {
-      return value && this.options.find(option => option.value === value).icon
-    },
-    getIconByValue(value) {
-      if(!value) {
-        return 'undefined';
-      }
-      return this.options.find(option => option.value === value).icon;
-    },
-    getTextByValue(value) {
-      return this.options.find(option => option.value === value).text;
-    },
     changeValue(option){
       this.show = false;
       this.$emit('change', option);
