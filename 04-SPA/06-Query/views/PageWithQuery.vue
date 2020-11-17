@@ -56,12 +56,19 @@ export default {
 
   methods: {
     isSamePath(query) {
-      return (
+      const isDefault = (
+        (this.view === 'list' && !query.view) &&
+        (this.date === 'all' && !query.date) &&
+        (this.participation === 'all' && !query.participation) &&
+        (this.search === '' && !query.search)
+      );
+      const isSame = (
         this.view === query.view &&
         this.date === query.date &&
         this.participation === query.participation &&
         this.search === query.search
       );
+      return isSame || isDefault;
     },
     updateParamsFromQuery(query) {
       this.view = query.view ? query.view : 'list';
