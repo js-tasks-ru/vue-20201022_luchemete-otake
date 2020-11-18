@@ -1,5 +1,5 @@
 <template>
-  <form class="form" @submit="onLogin">
+  <form class="form" @submit.prevent="onLogin">
     <div class="form-group">
       <span>
         <label class="form-label">

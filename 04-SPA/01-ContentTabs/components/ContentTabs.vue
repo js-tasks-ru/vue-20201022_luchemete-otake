@@ -10,7 +10,9 @@
       >{{ tab.text }}</router-link
       >
     </div>
-    <slot></slot>
+    <div class="content-tabs__content">
+      <slot></slot>
+    </div>
   </div>
 </template>
 

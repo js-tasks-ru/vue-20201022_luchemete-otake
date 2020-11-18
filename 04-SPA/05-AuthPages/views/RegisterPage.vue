@@ -1,5 +1,5 @@
 <template>
-  <form class="form" @submit="onRegister">
+  <form class="form" @submit.prevent="onRegister">
     <div class="form-group">
       <label class="form-label">Email</label>
       <div class="input-group">

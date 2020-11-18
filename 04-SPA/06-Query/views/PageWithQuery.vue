@@ -25,10 +25,6 @@ export default {
     };
   },
 
-  created() {
-    this.updateParamsFromQuery(this.$route.query);
-  },
-
   computed: {
     query() {
       return {
@@ -49,8 +45,11 @@ export default {
       }
       this.$router.push({ path: '/', query: val });
     },
-    $route(to) {
-      this.updateParamsFromQuery(to.query);
+    $route: {
+      handler: function (to) {
+        this.updateParamsFromQuery(to.query);
+      },
+      immediate: true,
     },
   },
 
