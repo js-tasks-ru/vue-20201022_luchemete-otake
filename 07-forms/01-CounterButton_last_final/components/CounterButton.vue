@@ -1,5 +1,5 @@
 <template>
-  <button type="button" @click="increase">{{ innerCount }}</button>
+  <button type="button" @click="increase">{{ localCount }}</button>
 </template>
 
 <script>
@@ -41,6 +41,4 @@ export default {
 };
 </script>
 
-<style>
-
-</style>
+<style></style>
