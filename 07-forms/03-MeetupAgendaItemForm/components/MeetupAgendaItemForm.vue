@@ -90,6 +90,14 @@ function getDateByTime(time) {
   return date;
 }
 
+function doubleTimeFormat(time) {
+  return time < 10 ? '0' + time : time;
+}
+
+function getFormattedTime(hours, minutes) {
+  return `${doubleTimeFormat(hours)}:${doubleTimeFormat(minutes)}`;
+}
+
 export default {
   name: 'MeetupAgendaItemForm',
 
@@ -145,13 +153,8 @@ export default {
       time_end_new.setMilliseconds(time_end_new.getMilliseconds() + length);
       let hours = time_end_new.getHours();
       let minutes = time_end_new.getMinutes();
-      if (hours < 10) {
-        hours = '0' + hours;
-      }
-      if (minutes < 10) {
-        minutes = '0' + minutes;
-      }
-      this.localAgendaItem.endsAt = `${hours}:${minutes}`;
+
+      this.localAgendaItem.endsAt = getFormattedTime(hours, minutes);
       this.localAgendaItem.startsAt = newStartTime;
     },
   },
