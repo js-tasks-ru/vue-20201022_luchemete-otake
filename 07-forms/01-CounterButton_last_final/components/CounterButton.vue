@@ -20,22 +20,22 @@ export default {
 
   data() {
     return {
-      innerCount: this.count,
+      localCount: this.count,
     };
   },
 
   watch: {
     count(val) {
       if (val) {
-        this.innerCount = val;
+        this.localCount = val;
       }
     },
   },
 
   methods: {
     increase() {
-      this.innerCount += 1;
-      this.$emit('increment', this.innerCount);
+      this.localCount += 1;
+      this.$emit('increment', this.localCount);
     },
   },
 };
