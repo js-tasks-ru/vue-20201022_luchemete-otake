@@ -32,7 +32,8 @@
       <meetup-agenda-item-form
         v-for="(agendaItem, index) in localMeetUp.agenda"
         class="mb-3"
-        :agenda-item.sync="localMeetUp.agenda[index]"
+        :agenda-item="agendaItem"
+        @update:agendaItem="updateAgendaItem($event, index)"
         :key="agendaItem.id"
         @remove="removeAgendaItem(index)"
       />
@@ -83,6 +84,10 @@ function buildAgendaItem() {
   };
 }
 
+function clone(obj) {
+  return JSON.parse(JSON.stringify(obj));
+}
+
 export default {
   name: 'MeetupForm',
 
@@ -101,13 +106,13 @@ export default {
 
   data() {
     return {
-      localMeetUp: { ...this.meetup, agenda: [...this.meetup.agenda] },
+      localMeetUp: clone(this.meetup),
     };
   },
 
   methods: {
     submitFormData() {
-      this.$emit('submit', this.localMeetUp);
+      this.$emit('submit', clone(this.localMeetUp));
     },
     addAgendaItem() {
       const newItem = buildAgendaItem();
@@ -116,6 +121,9 @@ export default {
         newItem.startsAt = this.localMeetUp.agenda[lastIndex].endsAt;
       }
       this.localMeetUp.agenda.push(newItem);
+    },
+    updateAgendaItem(agendaItem, index) {
+      this.localMeetUp.agenda.splice(index, 1, agendaItem);
     },
     removeAgendaItem(index) {
       this.localMeetUp.agenda.splice(index, 1);
