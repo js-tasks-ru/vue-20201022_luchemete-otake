@@ -1,10 +1,39 @@
-<template>
-  <button class="button"></button>
-</template>
-
 <script>
 export default {
   name: 'BaseButton',
+
+  props: {
+    block: {
+      type: Boolean,
+    },
+    tag: {
+      type: String,
+      default: 'button',
+      validator: (tag) => {
+        return ['button', 'a', 'router-link'].some((value) => value === tag);
+      },
+    },
+  },
+
+  render(h) {
+    const classes = ['button'];
+    if (this.block) {
+      classes.push('button_block');
+    }
+    return h(
+      this.tag,
+      {
+        class: classes.join(' '),
+        attrs: {
+          ...this.$attrs,
+        },
+        on: {
+          ...this.$listeners,
+        },
+      },
+      this.$slots.default,
+    );
+  },
 };
 </script>
 
